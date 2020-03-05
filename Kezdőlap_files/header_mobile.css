@@ -1,0 +1,91 @@
+/*#p.p_mobile #p_navigation_container,*/
+/*#p.p_mobile #p_mobile_menu_button,*/
+/*#p.p_mobile #p_mobile_navigation_container,*/
+/*#p.p_mobile #p_header_social_icons {*/
+    /*display: none;*/
+/*}*/
+
+/*#p.p_mobile #p_header_content {*/
+    /*width: 100%;*/
+    /*margin: 0;*/
+    /*padding: 30px 10px;*/
+    /*top: 50%;*/
+    /*left: auto;*/
+    /*-webkit-transform: translateY(-50%) translateX(0);*/
+    /*-ms-transform: translateY(-50%) translateX(0);*/
+    /*transform: translateY(-50%) translateX(0);*/
+    /*position: relative;*/
+/*}*/
+
+/*#p.p_mobile #p_header_container_outer .p_header_social_icons {*/
+    /*display: none;*/
+/*}*/
+
+/*#p.p_mobile #p_header_title {*/
+    /*font-size: 30px;*/
+/*}*/
+
+/*#p.p_mobile #p_header_subtitle {*/
+    /*font-size: 15px;*/
+/*}*/
+
+/*#p.p_mobile #p_header_picture_outer,*/
+/*#p.p_mobile #p_header_picture {*/
+    /*max-width: 250px;*/
+    /*max-height: 200px;*/
+    /*width: auto !important;*/
+    /*height: auto !important;*/
+/*}*/
+
+/*#p.p_mobile .p_editable:hover:after {*/
+    /*border: none;*/
+    /*background: none;*/
+/*}*/
+
+/*#p_mobile_menu_logo,*/
+/*#p_mobile_menu_title,*/
+/*#p_mobile_menu_subtitle,*/
+/*#p_mobile_menu_social_icons {*/
+    /*margin: 10px auto;*/
+/*}*/
+
+/*#p_mobile_menu_logo {*/
+    /*margin-top: 0;*/
+/*}*/
+
+/*#p_mobile_menu_social_icons {*/
+    /*margin-bottom: 0;*/
+/*}*/
+
+/*#p_mobile_menu_logo {*/
+    /*max-width: 200px;*/
+    /*max-height: 100px;*/
+    /*margin: 30px auto 20px;*/
+/*}*/
+
+ /*#p_mobile_menu_title {*/
+    /*font-size: 20px;*/
+    /*line-height: 1.2em;*/
+/*}*/
+
+/*#p_mobile_menu_subtitle {*/
+    /*font-size: 15px;*/
+    /*line-height: 1.2em;*/
+/*}*/
+
+/*#p_mobile_menu_social_icons a {*/
+    /*text-decoration: none;*/
+/*}*/
+
+
+
+
+/********************************************************************************************************************/
+ /** DOBOZOS FEJLÉC*/
+/*******************************************************************************************************************/
+/*#p.p_mobile .p_boxed_header #p_navigation_container {*/
+/*#p.p_mobile #p_mobile_menu_button_outer,*/
+/*#p.p_mobile #p_mobile_navigation_container,*/
+/*#p.p_mobile #p_header_social_icons {*/
+    /*display: block;*/
+/*}*/

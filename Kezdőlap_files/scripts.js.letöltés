@@ -1,0 +1,1023 @@
+
+(function($) {
+    $(document).ready(function() {
+
+
+        // FORM TESZT GOMB
+
+
+        //$('body').prepend('<button name="send_emails">asd</button>');
+        //function makeid()
+        //{
+        //    var text = "";
+        //    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        //
+        //    for( var i=0; i < 5; i++ )
+        //        text += possible.charAt(Math.floor(Math.random() * possible.length));
+        //
+        //    return text;
+        //}
+        //
+        //var i = 0;
+        //$(document).on('click', 'button[name="send_emails"]', function() {
+        //    $('.p_form_element input').each(function() {
+        //        if ($(this).attr('name') != 'birthday' &&
+        //            $(this).attr('name') != 'name' &&
+        //            $(this).attr('name') != 'message' &&
+        //            $(this).attr('name') != 'subject' &&
+        //            $(this).attr('name') != 'email') {
+        //            if ($(this).attr('type') == 'checkbox') {
+        //                $(this).attr('checked', false);
+        //
+        //                $(this).attr('checked', (Math.random() < 0.5));
+        //            } else if ($(this).attr('type') == 'submit') {
+        //                $(this).trigger('click');
+        //            } else if ($(this).attr('data-type') == 'url') {
+        //                $(this).val('http://asd.hu');
+        //            } else {
+        //                if ($(this).attr('data-type') == 'email') {
+        //                    $(this).val('asd@asd.com');
+        //                } else {
+        //                    $(this).val(i + ' ' + makeid());
+        //                }
+        //            }
+        //        }
+        //    });
+        //    i++;
+        //    $(this).html(i);
+        //});
+
+        function optimizePageToScreen() {
+            if ($('#p').attr('data-1180') == '1') {
+                if ($(window).width() < 1260) {
+                    if ($('#p').hasClass('p_1180')) {
+
+                        $('#p').find('.p_image_module').each(function () {
+                            var img = $(this).find('img');
+                            var container = $(this).find('.p_image_container');
+
+                            $.rePositionImageModules(img, container);
+
+                        });
+
+                        $('#p').find('.p_slider_module').each(function () {
+                            $.rePositionSliderModules($(this));
+                        });
+                        $('#p.p_1180').removeClass('p_1180');
+                    }
+                } else {
+                    if (!$('#p').hasClass('p_1180')) {
+
+                        $('#p').find('.p_image_module').each(function () {
+                            var img = $(this).find('img');
+                            var container = $(this).find('.p_image_container');
+
+                            $.rePositionImageModules(img, container);
+
+                        });
+
+                        $('#p').find('.p_slider_module').each(function () {
+                            $.rePositionSliderModules($(this));
+                        });
+
+                        $('#p').addClass('p_1180');
+                    }
+                }
+            }
+        };
+
+
+        $.rePositionImageModules = function(img, container) {
+
+            var has_1180_class = $('#p').hasClass('p_1180');
+            var aspect_ratio, content_width, margin_left, margin_top, width, height;
+            var width_class = container.closest('[width-class]').attr('width-class');
+
+            if (!has_1180_class) {
+                if (width_class == 12) {
+                    aspect_ratio = 1160 / 940;
+                } else {
+                    aspect_ratio = 1180 / 940;
+                }
+                $(img).attr('src', $(img).attr('src').replace('1024x1024', '1180x1180'));
+            } else {
+                if (width_class == 12) {
+                    aspect_ratio = 940 / 1160;
+                } else {
+                    aspect_ratio = 940 / 1180;
+                }
+                $(img).attr('src', $(img).attr('src').replace('1180x1180', '1024x1024'));
+            }
+
+            img.parent().parent().parent().css({
+                height: img.parent().parent().parent().height() * aspect_ratio,
+            });
+
+            img.parent().parent().css({
+                height: img.parent().parent().height() * aspect_ratio,
+            });
+
+            img.parent().css({
+                height: img.parent().height() * aspect_ratio,
+            });
+
+            //console.log($(img).attr('src'));
+            //console.log(img.get(0).naturalWidth);
+            //console.log(img.get(0).naturalHeight);
+            var image = new Image();
+            image.src = $(img).attr('src');
+            image.onload = function() {
+                img.css({
+                    maxWidth: this.width,
+                    maxHeight: this.height,
+                    width: img.width() * aspect_ratio,
+                    height: img.height() * aspect_ratio,
+                    marginTop: (parseInt(img.css('margin-top')) * aspect_ratio) + 'px',
+                    marginLeft: (parseInt(img.css('margin-left')) * aspect_ratio) + 'px'
+                });
+            };
+        }
+
+        $.rePositionSliderModules = function(module) {
+
+            // első lépésben a slider főképeit kell kropra állítanunk!
+            $(module).closest('[width-class]').find('.p_slider_main_image').each(function () {
+                //ha a kép épp nem látszik display: blockra kapcsoljuk és hozzáadunk egy + classt
+                var parent = $(this).parent();
+                if (parent.css('display') == 'none') {
+                    $(parent).css('display', 'block').addClass('w_current_block');
+                }
+
+                var width_class = $(module).closest('[width-class]').attr('width-class');
+                var has_1180_class = $('#p').hasClass('p_1180');
+                var aspect_ratio, which, content_width;
+                if (!has_1180_class) {
+                    if (width_class == 12) {
+                        aspect_ratio = 1160 / 940;
+                    } else {
+                        aspect_ratio = 1180 / 940;
+                    }
+                    which = 1180;
+                    content_width = (1160 / 12) * width_class - 20;
+                } else {
+                    aspect_ratio = 940 / 1180;
+                    if (width_class == 12) {
+                        aspect_ratio = 940 / 1160;
+                    } else {
+                        aspect_ratio = 940 / 1180;
+                    }
+                    which = 940;
+                    content_width = (940 / 12) * width_class;
+                }
+
+                var img = $(this).find('img');
+                var container = this;
+                var original_height = $(img).attr('data-height');
+                var original_width = $(img).attr('data-width');
+                var new_height = $(container).height();
+                var new_width = content_width;
+                var height_ratio = original_height / new_height;
+                var width_ratio = original_width / new_width;
+
+                if (height_ratio < width_ratio) {
+                    var optimal_ratio = height_ratio;
+                } else {
+                    var optimal_ratio = width_ratio;
+                }
+
+                var optimal_height = original_height / optimal_ratio;
+                var optimal_width = original_width / optimal_ratio;
+
+                if (optimal_height > original_height) {
+                    optimal_height = original_height;
+                }
+
+                if (optimal_width > original_width) {
+                    optimal_width = original_width;
+                }
+
+                var mask_x = Math.round(( optimal_width / 2) - ( new_width / 2 ));
+                var mask_y = Math.round(( optimal_height / 2) - ( new_height / 2 ));
+
+                $(img).css({
+                    width: optimal_width + 'px',
+                    height: optimal_height + 'px',
+                    marginTop: -mask_y,
+                    marginLeft: -mask_x
+                });
+
+                $(img).attr('data-image-dimension-width', $(img).width());
+                $(img).attr('data-image-dimension-height', $(img).height());
+                if (parent.hasClass('w_current_block')) {
+                    //ha rajta van a class display nonera rakjuk
+                    $(parent).css('display', 'none').removeClass('w_current_block');
+                }
+
+                //$(this).find('img').css('margin-left', Math.abs(parseInt($(this).find('img').css('margin-left'))) + 'px');
+            });
+        }
+
+        $(window).on('resize', function() {
+            optimizePageToScreen();
+        });
+
+        optimizePageToScreen();
+
+        if ( !$('#p').hasClass('p_boxed') ) {
+            var anim = $.grep($('#p_header_container_outer').attr('class').split(" "), function (v, i) {
+                return v.indexOf('p_animation') === 0;
+            }).join();
+
+            //$('#p_header_content').css('opacity', '0');
+
+            $('#p_header_container_outer').removeClass(function (index, css) {
+                return (css.match(/\bp_animation_\S+/g) || []).join(' ');
+            });
+
+            var url = $('#p_header_image').attr('data-url');
+
+            if (anim != 'p_animation_no_animation') {
+                $('#p_header_content').css('opacity', 0);
+            }
+
+            //$('#p:not(.p_style_none) #p_header_image').css('opacity', '0');
+            var img = new Image();
+            img.onload = function () {
+                $('.p_preloading_screen').addClass('p_loaded');
+                setTimeout(function () {
+            //        $('#p_header_container:not(.p_style_none) #p_header_image,  #p_navigation_container, #p .p_public.p_content, #p .p_public #p_header_arrow_hover').css('opacity', '1');
+            //        if (get == '' || get == 'p_animation_no_animation') {
+            //            $('#p_header_content').css('opacity', '1');
+            //        }
+            //    }, 10);
+            //    setTimeout(function () {
+            //        $('#p').css('opacity', '1');
+            //    }, 150);
+            //    setTimeout(function () {
+            //        if (get != '' || get != 'p_animation_no_animation') {
+            //            $('#p_header_content').css('opacity', '1');
+            //        }
+            //
+                    if (anim != 'p_animation_no_animation') { 
+                        $('#p_header_content').css('opacity', 1);
+                    }
+
+                    $('#p_header_container_outer').addClass(anim);
+                    $('.p_preloading_screen').css('display', 'none');
+                }, 750);
+            };
+            img.src = url;
+            if (img.complete) img.onload();
+        } else {
+            $('.p_preloading_screen').addClass('p_loaded');
+            setTimeout(function(){
+                $('.p_preloading_screen').css('display', 'none');
+            }, 750);
+        }
+
+        // Karácsonyi fejléc téma
+        if ( $('#w_show_snow').html() != undefined ) {
+            Snow.initSnow();
+        }
+
+        $('.p_gallery_module.p_public.p_brick img, .p_gallery_module.p_public.p_brick_2 img, .p_gallery_module.p_public.p_brick_3 img, .p_gallery_module.p_public.p_brick_4 img, .p_gallery_module.p_public.p_brick_5 img').each(function () {
+            var img = new Image();
+            $(img).attr('src', $(this).attr('src'));
+            if ( img.complete || img.readyState === 4 ) {
+
+                var width_scale = $(this).get(0).naturalWidth / $(this).parent().innerWidth();
+                var height_scale = $(this).get(0).naturalHeight / $(this).parent().innerHeight();
+                if (width_scale > height_scale) {
+                    $(this).addClass('p_img_height');
+                } else {
+                    $(this).addClass('p_img_width');
+                }
+
+            } else {
+                $('.p_gallery_module.p_public.p_brick img, .p_gallery_module.p_public.p_brick_2 img, .p_gallery_module.p_public.p_brick_3 img, .p_gallery_module.p_public.p_brick_4 img, .p_gallery_module.p_public.p_brick_5 img').load(function() {
+
+                    var width_scale = $(this).get(0).naturalWidth / $(this).parent().innerWidth();
+                    var height_scale = $(this).get(0).naturalHeight / $(this).parent().innerHeight();
+                    if (width_scale > height_scale) {
+                        $(this).addClass('p_img_height');
+                    } else {
+                        $(this).addClass('p_img_width');
+                    }
+                });
+            }
+        });
+
+        //ha mobilról nyitotta meg mobile tag hozzáadása a bodyhoz
+        if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || $('#p').width() < 980 ) {
+    //        console.log(navigator.userAgent);
+            $('#p').addClass('p_mobile');
+
+            $.reloadModulesOnMobil();
+            $.optimizePageInMobile();
+
+        }
+
+        $(window).on('resize', function() {
+            if ($('#p').width() < 980) {
+                console.log('1');
+                $('#p').addClass('p_mobile');
+
+                $.reloadModulesOnMobil();
+                $.optimizePageInMobile();
+            } else if ($('#p').width() > 980 && $('#p').hasClass('p_mobile')) {
+                location.reload();
+            }
+        });
+
+        var clickHandler = ('ontouchstart' in document.documentElement ? "touchstart" : "click");
+
+        var p                   = $('#p');
+        var mobile_menu         = $('#p_phone_menu');
+        var mobile_menu_width   = parseInt( mobile_menu.outerWidth() );
+        var mobile_menu_button  = $('#p_mobile_menu_button');
+
+        // Fejlécképen nyílra kattintás
+        $(document).on(clickHandler, '#p_header_arrow_hover', function() {
+            $('#p').animate({
+                scrollTop: $('#p').scrollTop() + $('.p_content').position().top
+            }, 500);
+        });
+
+
+        // Mobil menü megjelenítése / elrejtése
+        $('#p_mobile_menu_button').on(clickHandler, function(e) {
+
+            // TEST[Ricsi]
+            //console.log('menu_click'); 
+
+
+            if ( !$('#p').is(':animated') && !$('#p_mobile_menu_button').is(':animated') && !$('#p_cover_layer').is(':animated') ) {
+                if ( !p.hasClass('p_open_menu') ) {
+                    mobile_menu.show();
+
+                    p.addClass('p_open_menu');
+                    mobile_menu_button.addClass('p_close');
+
+                    $('#p, #p_mobile_menu_button').animate({
+                        'right': mobile_menu_width
+                    }, 750, 'easeInOutExpo');
+
+                    $('#p_cover_layer')
+                        .animate({
+                            'right': mobile_menu_width
+                        }, 750, 'easeInOutExpo')
+                        .fadeIn(500);
+                } else {
+                    p.removeClass('p_open_menu');
+                    mobile_menu_button.removeClass('p_close');
+
+                    $('#p, #p_mobile_menu_button').animate({
+                        'right': 0
+                    }, 750, 'easeInOutExpo');
+
+                    $('#p_cover_layer')
+                        .animate({
+                            'right': 0
+                        }, 750, 'easeInOutExpo')
+                        .fadeOut(500);
+
+                    setTimeout(function() {
+                        mobile_menu.hide();
+                    }, 750);
+                }
+            }
+        });
+
+
+        //az aktuális menü aktiválása
+        var split       = window.location.href.split('/');
+        var url         = '';
+        var language    = '';
+        var route       = '';
+
+        if ( typeof(split[4]) != "undefined" && split[4] !== null ) {
+            language    = split[3];
+            route       = split[4];
+            url         = language + '/' + route;
+        } else {
+            route   = split[3];
+            url     = route;
+        }
+
+        // Nyelv választó átirányítás
+        $(document).on('click', '.p_language_list .p_language_div', function() {
+            window.location.href = $(this).attr('data-url');
+        });
+
+        if ( split[3] != '') {
+            // Nyelv választó cserélése az adott nyelvre
+            var current_language        = $('.p_language_div[data-url="/' + split[3] +'"]');
+            //var loaded_language_html    = $('.p_selected_language').html();
+            //var loaded_language_url     = $('.p_selected_language').attr('data-url');
+            $('.p_selected_language').html( current_language.html() );
+            $('.p_selected_language').attr( 'data-url', current_language.attr('data-url') );
+            $('.p_hidden_language').removeClass('p_hidden_language');
+            current_language.addClass('p_hidden_language');
+            //$('.p_language_div[data-url="/' + split[3] +'"]').html( loaded_language_html );
+            //$('.p_language_div[data-url="/' + split[3] +'"]').attr('data-url', loaded_language_url);
+        }
+
+
+        $('.p_menu a').removeClass('p_active');
+        $('#p_phone_menu a').removeClass('p_active');
+
+        if (split[3] != '') {
+            $('.p_menu a[href="/' + url + '"]').addClass('p_active');
+            $('#p_phone_menu a[href="/' + url + '"]').addClass('p_active');
+        } else {
+            if ( language != 'undefined' && language != '' ) {
+                $('.p_menu a[href="/' + language + '"]').addClass('p_active');
+                $('#p_phone_menu a[href="/' + language +'"]').addClass('p_active');
+            } else {
+                $('.p_menu a[href="/"]').addClass('p_active');
+                $('#p_phone_menu a[href="/"]').addClass('p_active');
+                $('.p_menu a[href="/homepage"]').addClass('p_active');
+                $('#p_phone_menu a[href="/homepage"]').addClass('p_active');
+            }
+        }
+
+
+        // Mobilnézetben letiltjuk a logó, a főcím és az alcím eseményét
+        $(document).on('click', '#p.p_mobile #p_logo_container > a, #p.p_mobile .p_site_title > a', function(e) {
+            e.preventDefault();
+        });
+
+
+        //sliderek elindítása
+        $('.p_slider_module').each( function() {
+            $(this).wezzSlideshow();
+        });
+
+
+        //selectek inicializálása
+        $('body .p_form_module select').each(function() {
+            $(this).chosen({disable_search_threshold: 10});
+        });
+
+
+
+        //checkbox működés
+        $('.p_checkbox_div').on('click', function(){
+            if ( $(this).hasClass('p_checked') ){
+                $(this).removeClass('p_checked');
+                $(this).find('input').removeAttr('checked');
+            } else {
+                $(this).addClass('p_checked');
+                $(this).find('input').attr('checked', 'checked');
+            }
+        });
+
+
+        //radio működés
+        $('.p_radio_div').on('click', function(){
+            $(this).parent().find('.p_radio_div').each( function() {
+                $(this).removeClass('p_selected');
+                $(this).find('input').removeAttr('checked');
+            });
+            $(this).addClass('p_selected');
+            $(this).find('input').attr('checked', 'checked');
+        });
+
+
+        /*******************************************************************************************************************
+         * A képet cropolja a szülőben
+         * Paraméterei: kép objektum, szülő objektum
+         ******************************************************************************************************************/
+        $.cropImage = function(img, container) {
+
+            var original_height     = $(img).attr('data-height');
+            var original_width      = $(img).attr('data-width');
+            var new_height          = $(container).height();
+            var new_width           = $(container).width();
+            var height_ratio        = original_height / new_height;
+            var width_ratio         = original_width /  new_width;
+
+
+            //console.log(new_height, new_width);
+
+
+            if (height_ratio < width_ratio) {
+                var optimal_ratio = height_ratio;
+            } else {
+                var optimal_ratio = width_ratio;
+            }
+
+            var optimal_height = original_height / optimal_ratio;
+            var optimal_width  = original_width  / optimal_ratio;
+
+            var mask_x = Math.round( ( optimal_width / 2) - ( new_width / 2 ) );
+            var mask_y = Math.round( ( optimal_height / 2) - ( new_height / 2 ) );
+
+
+            //console.log(original_height + ' ' + original_width + ' ' + optimal_height + ' ' + optimal_width + ' ' + height_ratio + ' ' + width_ratio + ' ' + mask_x + ' ' + mask_y);
+
+            $(img).css({
+                width: optimal_width + 'px',
+                height: optimal_height + 'px',
+                marginTop: - mask_y,
+                marginLeft: - mask_x
+            });
+
+        }
+
+
+        // Képek megjelenítése
+        $('.p_single_image').colorbox({
+            current:    '',
+            maxWidth: '98%',
+            maxHeight: '98%'
+        });
+
+
+        if( $('#p').width() >= 940 ) {
+    //        //yoxview inicializálás
+    //        $('.yoxview_image').yoxview({
+    //
+    //        });
+    //
+    //        //yoxview inicializálás galériákra
+    //        $('.p_gallery_module').yoxview({
+    //            skin: 'top_menu'
+    //        });
+
+            // Galériaképek megjelenítése
+            $('.p_gallery_image').colorbox({
+                rel:        'p_gallery_image',
+                maxWidth:   '60%',
+                maxHeight:  '80%',
+
+                //innerWidth:     '100%',
+                //innerHeight:    '100%',
+
+                //width:     '100%',
+                //height:    '100%',
+
+                //maxWidth: '100%',
+                //maxHeight: '100%',
+
+                current:    '',
+                transition: 'elastic',
+                onComplete: function () {
+                    //$('.p_color_box_container').remove();
+                    var html = ''
+                    if ( $(this).find('img').attr('alt') != '' || ( $(this).find('img').attr('data-description') != '' && $(this).find('img').attr('data-description') != undefined ) )  {
+
+                        var desc = $(this).find('img').attr('data-description');
+                        html = '' +
+                        '<div class="p_color_box_info_container">' +
+                            '<div class="p_color_box_title">' + $(this).find('img').attr('alt') + '</div>' +
+                            '<div class="p_color_box_description">' + desc + '</div>' +
+                        '</div>';
+
+                    }
+                    $('#cboxLoadedContent').append(html);
+                    var info_height     = $('.p_color_box_info_container').outerHeight(true);
+                    $('#colorbox').css('height', ($('#colorbox').height() + info_height) + 'px');
+                    $('#colorbox').css('top', ( parseInt( $('#colorbox').css('top') ) - (info_height / 2) ) + 'px');
+                    $('#cboxWrapper').css('height', ($('#cboxWrapper').height() + info_height) + 'px');
+                    $('#cboxContent').css('height', ($('#cboxContent').height() + info_height) + 'px');
+                    $('#cboxLoadedContent').css('height', ($('#cboxLoadedContent').height() + info_height) + 'px');
+                }
+            });
+
+            //// Kép wrappolása colorboxhoz
+            //$('body .p_image_module').each(function() {
+            //
+            //    if ( $('a', this).html() == undefined ) {
+            //        $('img', this).wrap(function () {
+            //            return '<a rel="p_gallery_image" href="' + $(this).attr('src') + '" class="p_image_module_a"></a>'
+            //        });
+            //    }
+            //
+            //});
+            //// Képek megjelenítése
+            //$('.p_image_module .p_image_module_a').colorbox({
+            //    rel:        'p_gallery_image',
+            //    current:    '',
+            //    maxWidth: function() {
+            //        return $(this).width();
+            //    },
+            //    maxHeight: function() {
+            //        return $(this).height();
+            //    },
+            //    transition: 'elastic',
+            //    html: function() {
+            //        return '<img src="' + $(this).attr('href') + '">';
+            //    }
+            //});
+
+        } else {
+
+            // Galériaképek megjelenítése
+            $('.p_gallery_image').colorbox({
+                rel:        'p_gallery_image',
+                current:    '',
+                maxWidth:   '100%',
+                maxHeight:      '100%'
+            });
+
+            $('body').on('swipeleft','#cboxContent',function(){
+                $.colorbox.next();
+            });
+
+            $('body').on('swipeleft','#cboxOverlay',function(){
+                $.colorbox.next();
+            });
+
+            $('body').on('swiperight','#cboxContent',function(){
+                $.colorbox.prev();
+            });
+
+            $('body').on('swiperight','#cboxOverlay',function(){
+                $.colorbox.prev();
+            });
+
+            // Képek megjelenítése
+            //$('.p_single_image').colorbox({
+            //    href:           $(this).attr('href'),
+            //    current:        '',
+            //    maxWidth:       '100%',
+            //    maxHeight:      '100%'
+            //});
+
+    //        $.optimizePageInMobile();
+
+        }
+
+        //form feltöltése a birthday-el
+        var d       = new Date();
+        var month   = d.getMonth() + 1;
+        var day     = d.getDate();
+        var date    = d.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (day < 10 ? '0' : '') + day;
+
+        $('form input[name="birthday"]').val(date);
+
+        $(".p_form_module form").submit(function(e) {
+            console.log($(this).attr('name'));
+            e.preventDefault();
+
+            var form = $(this);
+
+            $(form).find('.p_success_send').css('display', 'none');
+
+            var form_data = $(form).serializeArray();
+
+            // Nyelv
+            var selected_language   = $('.p_language_select_block .p_selected_language');
+            var webpage_language_id = null;
+
+            if (selected_language.length != 0) {
+                webpage_language_id = selected_language.attr('data-webpage-language-id');
+            }
+
+            form_data.push({
+                name:   'webpage_language_id',
+                value:  webpage_language_id
+            });
+
+            form_data.push({
+                name:   'form_hash',
+                value:  $(form).attr('data-form')
+            });
+
+            $('.p_form_module .p_radio_div').each(function() {
+                if ( $(this).hasClass('p_selected') ) {
+                    form_data.push({
+                        name: $('input', this).attr('name'),
+                        value: $('input', this).val()
+                    });
+                }
+            });
+
+            if ($('.p_form_module [data-type="email"]').length > 0) {
+                form_data.push({
+                    name: 'from_who_email',
+                    value: $('.p_form_module [data-type="email"]').val()
+                });
+            }  
+
+
+            var form_object = {};
+            $(this).find('.p_form_element input:not([type="checkbox"]), .p_form_element textarea,.p_form_element select').each(function() {
+ 
+                if ($(this).is('select')) {
+                    form_object[$(this).attr('name')] = {
+                        value:      $(this, 'option:selected').val(),
+                        type:       $(this).attr('data-type'),
+                        required:   $(this).attr('data-required'),
+                        key:        $(this).attr('name')
+                    };
+                } else {
+                    form_object[$(this).attr('name')] = {
+                        value:      $(this).val(),
+                        type:       $(this).attr('data-type'),
+                        required:   $(this).attr('data-required'),
+                        key:        $(this).attr('name')
+                    };
+                }
+            });
+
+            var val         = '';
+            var type        = '';
+            var required    = 0;
+            var name        = 0;
+            $(this).find('.p_form_element.p_form_checkbox_container').each(function() {
+                $(this).find('input').each(function() {
+                    if ($(this).is(':checked')) {
+                        val         += $(this).val();
+                        type        = 'checkbox';
+                        required    = $(this).attr('data-required');
+                        name        = $(this).attr('name');
+                    }
+                });
+
+                form_object[name] = {
+                    value:      val,
+                    type:       type,
+                    required:   required,
+                    key:        name
+                };
+            });
+
+            console.log(form_object);
+            $.ajax({
+                url:        '/form.php',
+                type:       'post',
+                data:       form_object,
+            }).done(function(data) {
+                console.log(data);
+            });
+
+            $.ajax({
+                url:        window.BASE_URL + 'api/send_wezzpage_form',
+                type:       'post',
+                data:       form_data,
+                dataType:   'jsonp',
+                xhrFields: {
+                    withCredentials: true
+                }
+            }).done(function(data) {
+
+                console.log(data);
+                if (data.error) {
+                    $.showErrors(data.error);
+                } else {
+                    var success_send_action = $('#p_success_send_action').val();
+
+                    if (success_send_action == 'show_success_message') {
+                        $(form).find('.p_success_send').slideDown(350);
+
+                        $('.p_form_module .p_checkbox_div.p_checked').removeClass('p_checked');
+                        $(':input','form')
+                            .not(':button, :submit, :reset, :hidden')
+                            .val('')
+                            .removeAttr('checked')
+                            .removeAttr('selected');
+                    } else if (success_send_action == 'redirect') {
+                        var redirect_url = $('#p_redirect_url').val();
+
+                        if (CURRENT_LANGUAGE == '../') {
+                            $(location).attr('href', '/' + redirect_url);
+                        } else {
+                            $(location).attr('href', '/' + CURRENT_LANGUAGE + '/' + redirect_url);
+                        }
+
+                    }
+                }
+            });
+        });
+
+
+        $.showErrors = function(error) {
+            var element;
+            for (var key in error) {
+                if ( key.indexOf('checkbox') >= 0 ) {
+                    element = $('[name^="' + key + '"]').parent('.p_checkbox_div');
+
+                    if ($( element).parents('.p_form_element').find('.w_error_msg').length == 0) {
+                        element.parents('.p_form_element').find('.p_checkbox_div').last().after('<div class="w_error_msg"></div>');
+                    }
+
+                    element
+                        .addClass('w_error')
+                        .siblings('.w_error_msg')
+                        .html(error[key])
+                        .slideDown('350');
+                } else {
+                    element = $('[name^="' + key + '"]');
+                    //console.log(error);
+
+                    if (element.siblings(".w_error_msg").length == 0) {
+                        element.after('<div class="w_error_msg"></div>');
+                    } 
+
+                    element
+                        .addClass('w_error')
+                        .siblings('.w_error_msg')
+                        .html(error[key])
+                        .slideDown('350');
+                }
+            }
+        }
+
+
+        // Hibaüzenet eltüntetése: text, textarea, select
+        $(document).on('focus, click, change', 'input, .p_checkbox', function() {
+            $(this)
+                .removeClass('w_error')
+                .siblings('.w_error_msg')
+                .slideUp(350);
+        });
+        $(document).on('click', '.p_checkbox_div', function() {
+            $(this).parent().find('.w_error').removeClass('w_error');
+            $(this).siblings('.w_error_msg')
+                .slideUp(350);
+        });
+
+
+        // [ÚJ]
+
+        // Kompakt navigációs sáv megjelenítése / elrejtése
+        $(document).on('click', '#p_compact_menu_button', function(e) {
+            e.preventDefault();
+
+            var compact_menu_button      = $('#p_compact_menu_button');
+            var compact_navigation       = $('#p_mobile_navigation_container')
+            var compact_navigation_width = parseInt( compact_navigation.outerWidth() );
+
+            if ( parseInt( compact_navigation.css('right') ) < 0) {
+
+                if ( !$('#p_mobile_navigation').hasClass('mCustomScrollbar') ) {
+                    $('#p_mobile_navigation').mCustomScrollbar({
+                        advanced: {
+                            updateOnContentResize: true
+                        },
+                        scrollInertia: 500,
+                        mouseWheelPixels: 200,
+                        autoDraggerLength: true,
+                        advanced: {
+                            updateOnContentResize: true,
+                            autoScrollOnFocus: false
+                        }
+                    });
+                }
+
+                compact_navigation.animate({
+                    'right': 0
+                }, 650, 'easeInOutExpo');
+
+                compact_menu_button.animate({
+                    'right': (compact_navigation_width - 15)
+                }, 650, 'easeInOutExpo');
+
+                compact_menu_button.addClass('p_close');
+
+                $('#p_cover_layer').fadeIn(500);
+            } else {
+
+                // Ha meg van jelenítve a menüblokk
+                compact_navigation.animate({
+                    'right': -compact_navigation_width
+                }, 650, 'easeInOutExpo')
+
+                compact_menu_button.animate({
+                    'right': 0
+                }, 650, 'easeInOutExpo');
+
+                compact_menu_button.removeClass('p_close');
+
+                $('#p_cover_layer').fadeOut(500);
+            }
+        });
+
+
+        // Ugrás a nyitóoldalra
+        $(document).on('click', '.p_logo, .p_title', function(e) {
+            e.preventDefault();
+
+            $(location).attr('href', '/' + CURRENT_LANGUAGE);
+        });
+
+
+        // Térhatás animáció bekapcsolása
+        $.on3dAnimation = function() {
+            if ( $('#p_header_image').hasClass('p_animation_3d') ) {
+                $('#p_header_container_outer').on('mousemove', function (e) {
+                    //$('#p_header_image').removeClass('p_fade');
+
+                    var offset = $(this).offset();
+                    var x = e.pageX - offset.left;
+                    var y = e.pageY - offset.top;
+                    var x_center = $('#p_header_container').width() / 2;
+                    var y_center = $('#p_header_container').height() / 2;
+
+                    var x_shift = parseInt((x_center - x) * 0.05);
+                    var y_shift = parseInt((y_center - y) * 0.05);
+
+                    $('#p_header_image').css({
+                        marginLeft: x_shift,
+                        marginTop:  y_shift
+                    });
+
+                    //$('#p_header_image').addClass('p_fade');
+                });
+            }
+        }
+
+        $.on3dAnimation();
+
+
+        // Látogatótól származó adatok összegyűjtése az egyediség meghatározása céljából
+        $.getVisitorData = function() {
+            var visitor_data = '';
+
+            if (typeof variable !== window.navigator) {
+                var navigator = window.navigator;
+
+                if (typeof variable !== navigator.userAgent) {
+                    visitor_data += navigator.userAgent + ' | ';
+                }
+
+                if (typeof variable !== navigator.hardwareConcurrency) {
+                    visitor_data += navigator.hardwareConcurrency + ' | ';
+                }
+
+                if (typeof variable !== navigator.language) {
+                    visitor_data += navigator.language + ' | ';
+                }
+
+                if (typeof variable !== navigator.platform) {
+                    visitor_data += navigator.platform + ' | ';
+                }
+
+                if (typeof variable !== navigator.plugins) {
+                    if (navigator.plugins.length != 0) {
+                        for (var i = 0; i < navigator.plugins.length; ++i) {
+                            visitor_data += navigator.plugins[i].name + '; ';
+                        }
+                    }
+
+                    visitor_data = visitor_data.slice(0, -2) + ' | ';
+                }
+
+                visitor_data += new Date().getTimezoneOffset();
+            }
+
+            return visitor_data;
+        }
+
+
+        // Statisztika
+        $.saveStatistics = function() {
+            var secret_id       = $('#p_secret_id').val();
+            var uri             = window.location.href.toString().split(window.location.host)[1];
+            var visitor_data    = $.getVisitorData();
+            var current_url     = window.location.hostname;
+            var http_referer    = $('#p_http_referer').val();
+            var new_visit       = http_referer.search(current_url) == -1 ? 1 : 0;
+
+            var src     = window.BASE_URL + 'api/save_statistics?secret_id=' + secret_id + '&uri=' + encodeURI(uri) +'&visitor_data=' + encodeURI(visitor_data) + '&new_visit=' + new_visit + '&previous_url=' + encodeURI(http_referer);
+            var iframe  = '<iframe src="' + src + '" style="width: 1px; height: 1px; position: absolute; left: -9999px; top: -9999px"></iframe>';
+
+            $(iframe).appendTo('body');
+        }
+
+        $.saveStatistics();
+
+    });
+
+
+    //Mobilon újra kell tölteni bizonyos modulokat
+    $.reloadModulesOnMobil = function() {
+
+        // Facebook likebox modul, újratöltése
+        $('.w_fb_likebox_iframe_cont').each(function() {
+            var $iframe     = $(this).find('iframe')
+            var $old_src    = $iframe.attr('src');
+            var $new_src    = $.changeNumberParamByName($old_src, 'width', $(this).width() );
+
+            $iframe.attr('src', $new_src);
+            $iframe.attr('width', $(this).width() + 'px');
+            $iframe.css('width', $(this).width() );
+        });
+    };
+
+
+    $.changeNumberParamByName = function (href, paramName, newVal) {
+        if($.type(href) === "undefined"){
+            return;
+        }
+        var tmpRegex = new RegExp("(" + paramName + "=)[0-9]+", 'ig');
+        return href.replace(tmpRegex, '$1'+newVal);
+    }
+})(jQuery);
+
+
+
+
+

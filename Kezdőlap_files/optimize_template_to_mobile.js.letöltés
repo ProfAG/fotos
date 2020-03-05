@@ -1,0 +1,337 @@
+(function($) {
+
+    $(document).ready(function() {
+
+        // TEST[Ricsi]
+        //setTimeout(function() {
+        //    $('iframe #u_0_0 > div').css('width', 50);
+        //    $('iframe #u_0_0 > div').css('background', '#b00');
+        //
+        //    console.log('test is ok');
+        //}, 15000);
+
+        $('#u_0_0').on('DOMNodeInserted', function() {
+            //alert(jQuery('#u_0_0').html());
+            $('#u_0_0').css('width', '50px');
+        });
+
+        $(document).on('click', '#p.p_mobile a.p_slider_item', function() {
+            window.open($(this).attr('href'), '_blank');
+        });
+
+
+        function getWezzColWidth(width_class) {
+            return width_class * 80; // ÁTÍRNI
+        }
+
+        $.resizeSliderInMobile = function () {
+
+                $('.p_slider_module').each(function() {
+
+                    var element = $(this);
+                    // Megnézzük mekkora lenne pc nézetben
+                    //var width_class = element.parent().parent().attr('width-class');
+                    var width_class = element.eq(0).closest('div[class*="w_wezz_col"]').attr('width-class');
+
+                    var orig_width      = getWezzColWidth(width_class) - 20;
+
+                    if ( !element.find('.p_slider_main').attr('data-orig-height') ) {
+                        element.find('.p_slider_main').attr('data-orig-height', element.find('.p_slider_main').height());
+                    }
+
+                    var orig_height     = element.find('.p_slider_main').attr('data-orig-height');
+                    // Kiszámoljuk az arányokat a mobil kinézethez
+                    var current_width   = $('.p_mobile').width() - 20;
+                    var ratio           = orig_width / orig_height;
+                    var new_height      = current_width / ratio;
+
+                    if ( new_height < 20) {
+                        new_height = 20;
+                    }
+
+                    // Cserélgetünk
+
+                    var slideshow   = element;
+                    //var images      = slideshow.find('img');
+                    var slideshow_height = 0;
+
+                    var images_heights = [];
+
+
+                    console.log('NEW Height: ' + new_height );
+
+                    $('img',this).each( function(i) {
+
+                        var img         = $(this);
+                        var container   = $(this).parent();
+                        var img_height  = parseInt( $(this).attr('data-height') ) / ( parseInt( $(this).attr('data-width') ) /current_width );
+
+                        var image_max_height = img.attr('data-max-height');
+
+                        $(container).parent().attr('style', $(container).parent().attr('data-orig') );
+                        $(container).attr('style', $(container).attr('data-orig') );
+                        $(slideshow).attr('style', $(slideshow).attr('data-orig') );
+
+                        $(container).css('text-align', 'center');
+                        $(container).css('vertical-align', 'middle');
+
+                        if ( current_width < img.attr('data-max-width') ) {
+                            img.css('width', 'auto');
+                            img.css('max-width', current_width + 'px');
+                        }
+
+                        if (new_height < image_max_height) {
+                            img.css('height', 'auto');
+                            img.css('max-height', new_height + 'px');
+                            images_heights[i] = new_height;
+                        } else {
+                            images_heights[i] = image_max_height;
+                        }
+
+                        img.css({
+                            margin: '0 auto',
+                            display: 'inline'
+                        });
+
+                        //$(this).css('margin-top','0px');
+                        //
+                        //if ( img.height() < new_height ) {
+                        //    img.css('margin-top', ( new_height - img_height ) / 2 + 'px');
+                        //} else if ( img.height() > new_height ) {
+                        //    img.css('margin-top', '-' + ( img_height - new_height ) / 2 + 'px');
+                        //}
+                        //img.css('margin-left', '0px');
+                    });
+
+
+                    var height = Math.max.apply(Math,images_heights);
+
+                    element.find('.p_slider_main').css({
+                        height: height + 'px',
+                    });
+
+                });
+        }
+
+
+        $.resizeImageInMobile = function (img, container, block){
+            //elsőnek ki kell számolnunk milyen magas legyen a container
+            //ehhez kell tudni kell milyen arányú volt a kép
+            //
+            //var img_height = $(img).height();
+            //var img_width = $(img).width();
+            //
+            ////var img_margin_top = parseInt($(img).css('margin-top'));
+            ////var img_margin_bottom = parseInt($(img).css('margin-bottom'));
+            ////var img_margin_left = parseInt($(img).css('margin-left'));
+            ////var img_margin_right = parseInt($(img).css('margin-right'));
+            //
+            //var ratio       = img_width / img_height;
+            //var new_height  = $(container).width() / ratio;
+            //
+            //$(block).removeAttr('style');
+            //
+            //$(container).parent().after( $(container).find('.p_image_description p') );
+            //$(container).parent().siblings('p').removeClass('p_thin_image_description');
+            //
+            //var width = ( img_width - (parseInt( $(container).parent().css('border-width') ) * 2) - (parseInt( $(container).css('border-width') ) * 2) );
+            //
+            //$(container).parent().css({
+            //    width: width,
+            //    marginLeft: 'auto',
+            //    marginRight: 'auto',
+            //    overflow: 'hidden'
+            //});
+            //
+            //$(container).css({
+            //    width: (width - (parseInt($(container).css('border-width')) * 2))
+            //});
+            //
+            //
+            //
+            //$(container).parent().siblings('p').addClass('p_thin_image_description');
+            ////}
+            //var img = $(img)[0];
+            var pic_real_width, pic_real_height;
+            $(img).closest('.p_image_module').find('.p_below_description').css('text-align', 'center');
+            $(img).closest('.p_image_module').find('.p_above_description').css('text-align', 'center'); 
+            $("<img/>")
+                .attr("src", $(img).attr("src"))
+                .load(function() {
+                    pic_real_width = this.width;
+                    pic_real_height = this.height;
+                    $(img).css('max-width',pic_real_width+'px');
+                    $(img).css('max-height',pic_real_height+'px');
+                    $(img).css('margin','auto');
+            //        $.cropImage(img, container);
+                });
+
+            $(container).css('height', 'auto');
+            $(container).parent().css('height', 'auto');
+        }
+
+
+        $.rotateDevice = function() {
+
+            $('.p_image_module').each(function() {
+                var img         = $(this).find('img');
+                var container   = $(this).find('.p_image_container');
+
+                $(this).removeAttr('style');
+                $(this).children().removeAttr('style');
+                $(container).removeAttr('style');
+                $(container).css({
+                    //width: $('#p').width() - 20,
+                    overflow: 'none'
+                });
+
+                $(this).find('a').removeAttr('style');
+                $(this).find('.p_border').removeAttr('style');
+
+                $(container).find('.p_image_description').addClass('p_below_description').removeClass('p_image_description')
+
+                $(img).removeAttr('style');
+
+                $(container).parent().attr('data-orig', $(container).parent().attr('style') );
+                $(container).attr('data-orig', $(container).attr('style') );
+                $(img).attr('data-orig', $(img).attr('style') );
+                $(this).attr('data-orig', $(this).attr('style') );
+
+                $.resizeImageInMobile(img, container, this);
+            });
+
+
+            //slider átméretezése
+            $.resizeSliderInMobile();
+
+            $("#p.p_mobile .chosen-container").css({width: "549px"});
+            if ($("#colorbox").css("display")=="block") {
+                $('#cboxContent').css('opacity','0');
+                $.reloadModulesOnMobil();
+                $.colorbox.next();
+
+
+                window.setTimeout(function () {
+
+                    $.colorbox.prev();
+
+                }, 1000);
+
+                window.setTimeout(function () {
+
+                    $('#cboxContent').animate({
+                        opacity: 1
+                    }, 300);
+
+                }, 1500);
+            }
+
+
+            // Fejléc magasságának optimalizálása
+            setTimeout(function() {
+                var header_container        = $('#p_header_container_outer');
+                var header_content          = $('#p_header_content');
+                var header_container_height = header_container.outerHeight();
+                var header_content_height   = header_content.outerHeight();
+
+                if (header_container_height <= header_content_height) {
+                    $('#p_header_container_outer, #p_header_container').css('height', header_content_height + 'px');
+                }
+
+                if ( header_container.hasClass('p_height_full_screen') && ($('#p').height() > header_container_height) ) {
+                    $('#p_header_container_outer, #p_header_container').css('height', '');
+                }
+            }, 250);
+
+        }
+
+        $.optimizePageInMobile = function() {
+            setTimeout(function() {
+
+                // Link tiltása szerkeztőben
+                $(document).on('click', '#p:not(.p_public) a', function(e) {
+                    e.preventDefault();
+                });
+
+                $.resizeSliderInMobile();
+
+                //sliderek elindítása
+                $('.p_slider_module').each( function() {
+                    $(this).wezzSlideshow();
+                });
+
+                // Képek újraméretezése ha elfordítja a telefont
+                $(window).bind('orientationchange', function(e) {
+                    var ori = window.orientation;
+                    var width = (ori==90 || ori==-90) ? screen.height : screen.width;
+
+                    setTimeout(function() {
+                        $.rotateDevice();
+                    }, 350);
+                });
+
+                //képek cropppolása
+                //$(window).load(function () {
+                    $('.p_image_module').each(function() {
+                        //$(this).find('.p_single_image').attr('href','');
+                        var img         = $(this).find('img');
+                        var container   = $(this).find('.p_image_container');
+
+                        $(this).find('a').removeAttr('style');
+                        $(this).find('.p_border').removeAttr('style');
+
+                        $(this).removeAttr('style');
+                        $(this).children().removeAttr('style');
+                        $(container).removeAttr('style');
+                        $(container).css({
+                            //width: $('#p').width() - 20,
+                            overflow: 'none'
+                        });
+
+                        $(container).find('.p_image_description').addClass('p_below_description').removeClass('p_image_description')
+
+                        $(img).removeAttr('style');
+
+                        $(container).parent().attr('data-orig', $(container).parent().attr('style') );
+                        $(container).attr('data-orig', $(container).attr('style') );
+                        $(img).attr('data-orig', $(img).attr('style') );
+                        $(this).attr('data-orig', $(this).attr('style') );
+
+                        $.resizeImageInMobile(img, container, this);
+                    });
+                //});
+
+                $('#p [data-type="p_facebook_comment_modul"]').each(function() {
+                    $(this).attr('data-width', $(this).width() + 'px');
+                    $(this).find('.fb-comments').attr('data-width', $(this).width());
+                    $(this).find('span').css('width', $(this).width() + 'px');
+                    $(this).find('iframe').css('width', $(this).width() + 'px');
+                });
+
+                $('#p [data-type="p_facebook_like_box_module"]').each(function() {
+                    //$(this).find('.fb-page').attr('data-width', $(this).width());
+                    //$(this).find('span').css('width', $(this).width() + 'px');
+                    //$(this).find('iframe').css('width', $(this).width() + 'px');
+                    //$(this).find('iframe').attr('width', $(this).width() + 'px');
+                    $(this).find('iframe').attr('src', $(this).find('iframe').attr('src').replace(/(&width=\d*)/g, '&width=' + $(this).width()));
+                });
+
+            },500);
+
+            $('.p_bordered_image').css({
+                height: 'auto'
+            });
+        }
+
+        $.optimizeImageGalleryAndSlider = function() {
+            setTimeout(function() {
+                $.resizeSliderInMobile();
+            }, 500);
+
+            $('.p_gallery_module').each(function() {
+                $(this).addClass('p_mobile');
+            });
+        }
+
+    });
+})(jQuery);

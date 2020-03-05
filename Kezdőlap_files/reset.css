@@ -1,0 +1,100 @@
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    /*font: inherit;*/
+  /*border: 0;*/
+  /*vertical-align: baseline;*/
+  /*font: inherit;*/
+}
+
+img, button {
+    border: none;
+}
+
+#p article, #p aside, #p details, #p figcaption, #p figure,
+#p footer, #p header, #p hgroup, #p menu, #p nav, #p section {
+    display: block;
+}
+
+html, body {
+  height: 100%;
+  /*line-height: 1;*/
+}
+
+#p br {
+    /*display: block;*/
+    /*line-height: inherit;*/
+}
+
+#p hr {
+    height: 1px;
+    margin: 0;
+    border: 0;
+}
+
+#p b, #p  strong {
+  font-weight: bold;
+}
+
+#p em, #p i {
+    font-style: italic;
+}
+
+#p a {
+  text-decoration: none;
+  color: inherit;
+}
+
+#p a, #p button, #p input[type="submit"], #p input[type="button"] {
+  cursor: pointer;
+}
+
+#p button, #p input[type="submit"], #p input[type="button"] {
+    border: none;
+}
+
+
+#p input, #p textarea, #p select, #p a {
+  outline: none;
+}
+
+#p select {
+    -moz-appearance: none;
+    text-indent: 0.01px;
+    text-overflow: '';
+}
+
+#p textarea {
+  /*font-family: inherit !important;*/
+  resize: none;
+  overflow: auto !important;
+}
+
+#p ol, #p ul, #p li {
+  list-style: none;
+}
+
+#p blockquote, #p q {
+  quotes: none;
+}
+
+#p blockquote:before, #p blockquote:after, #p q:before, #p q:after {
+  content: '';
+  content: none;
+}
+
+#p table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}

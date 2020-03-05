@@ -1,0 +1,240 @@
+/**
+ * A Slideshow működését kezeli
+ *
+ * @author torocsik.marton
+ *
+ * @access  public
+ *
+ */
+(function($) {
+    $.fn.wezzSlideshow = function(options) {
+
+        // Alapértelmezett beállítások
+        var slider      = $(this);
+        var button_prev = slider.find('.p_slider_prev');
+        var button_next = slider.find('.p_slider_next');
+
+        var settings = $.extend({
+            effect          : 'fade',
+            duration        : $(this).attr('data-duration'),
+            animateDuration : 1000,
+            autoplay        : $(this).attr('data-autoplay'),
+            carousel        : 0,
+            thumbNum        : 9,
+            thumbMargin     : 12
+        }, options);
+
+
+        var descriptions = new Array();
+
+        if ($('.p').width() < 980) {
+            // inicializáláskor lefutó kódrészlet
+            var mode    = 'mobile';
+            var i       = 0;
+            var height  = 0;
+
+            $(slider).find('.p_slider_description').css('opacity', '0').each(function() {
+
+                if (i == '0'){
+                    $(this).css('display', 'block').animate({
+                        opacity: 1
+                    }, settings.animateDuration);
+                }
+
+                if ($(this).outerHeight() > height) {
+                    height = $(this).outerHeight();
+                }
+
+                descriptions[i] = $(this);
+                i++;
+            });
+
+            $(this).find('.p_slider_description_container_mobile').css({
+                height: height
+            });
+        }
+
+
+        var main_images = new Array();
+        var i = 0;
+
+        $(slider).find('.p_slider_item').css('opacity', '0').each(function() {
+            if (i == '0') {
+                $(this).css({
+                    opacity: 1,
+                    display: 'block'
+                });
+            } else {
+                $(this).css({
+                    display: 'none'
+                });
+            }
+            main_images[i] = $(this);
+            i++;
+        });
+
+        var all_image   = i;
+        var actual      = 0;
+        var next        = actual + 1;
+        var prev        = actual - 1;
+        var interval    = null;
+
+        if ( (settings.autoplay == 1) && (all_image != 1) ){
+            startInterval();
+        }
+        //setCarousel();
+
+        //elindítja az intervalt
+        function startInterval(){
+            interval = setInterval(function() {
+                next = getNext();
+
+                hideImage(main_images[actual]);
+                hideDescription(descriptions[actual]);
+
+                showImage(main_images[next]);
+                showDescription(descriptions[next]);
+
+                //mobil esetén a szövegeket is léptetjük
+                if (mode == 'mobile'){
+                    hideDescription(descriptions[actual]);
+                    showDescription(descriptions[next]);
+                }
+
+                actual = next;
+            }, settings.duration);
+        };
+
+
+
+        //visszadja melyik a következő
+        function getNext() {
+            if (actual == all_image - 1){
+                return 0
+            } else {
+                return actual + 1;
+            }
+        };
+
+        //visszadja melyik az előző
+        function getPrev() {
+            if (actual == 0) {
+                return all_image - 1
+            } else {
+                return actual - 1;
+            }
+        };
+
+
+        function showImage(image) {
+            return $(image).css('display', 'block').animate({
+                opacity: 1
+            }, settings.animateDuration, function(){
+                $(button_prev).removeClass('disable_click');
+                $(button_next).removeClass('disable_click');
+            });
+        }
+
+        function hideImage(image) {
+            $(button_prev).addClass('disable_click');
+            $(button_next).addClass('disable_click');
+            return $(image).animate({
+                opacity: 0
+            }, settings.animateDuration, function() {
+                $(this).css('display', 'none');
+            });
+        }
+
+        function showDescription(description) {
+            $(description).animate({
+                opacity: 1
+            }, settings.animateDuration);
+        }
+
+        function hideDescription(description) {
+            $(description).animate({
+                opacity: 0
+            }, settings.animateDuration);
+        }
+
+
+        //előző gombra kattintáskor
+        button_prev.on('click', function(e) {
+            e.preventDefault();
+
+            if ((!button_prev.hasClass('disable_click')) && (all_image > 1) ){
+                $(button_prev).addClass('disable_click');
+                clearInterval(interval);
+                prev = getPrev();
+
+                if (mode == 'mobile'){
+                    hideDescription(descriptions[actual]);
+                    showDescription(descriptions[prev]);
+                }
+
+                $.when( hideImage(main_images[actual]), showImage(main_images[prev])).done( function() {
+                    //vissza tesszük a class-t mert vége az animációnak
+                    button_prev.removeClass('disable_click');
+                    actual = prev;
+                    if (settings.autoplay == 1){
+                        startInterval();
+                    }
+                });
+            }
+        });
+
+        //következő gombra kattintáskor
+        button_next.on('click', function(e) {
+            e.preventDefault();
+            //console.log('Load next image');
+
+            if ( (!button_next.hasClass('disable_click'))  && (all_image > 1) ){
+                button_next.addClass('disable_click');
+                clearInterval(interval);
+                next = getNext();
+                if (mode == 'mobile'){
+                    if (mode == 'mobile'){
+                        hideDescription(descriptions[actual]);
+                        showDescription(descriptions[next]);
+                    }
+                }
+                $.when( hideImage(main_images[actual]), showImage(main_images[next])).done( function() {
+                    button_next.removeClass('disable_click');
+                    actual = next;
+                    if (settings.autoplay == 1){
+                        startInterval();
+                    }
+                });
+            }
+        });
+
+
+        //beállítja a carouselt
+        function setCarousel(){
+            //MEGSZÁMOLJUK HÁNY KÉP VAN, HA KEVESEBB VAN MINT A BEÁLÍTOTT AKKOR BETESSZÜK KÖZÉPRE A KÉPEKET ÉS ELREJTJÜK A NYILAKAT!
+            var thumb_num = $(slider).find('.p_slider_thumb_cont').length;
+
+            if (thumb_num <= settings.thumbNum){
+                $(slider).find('.p_carousel_left, .p_carousel_right').css({
+                    opacity: 0
+                });
+                var max_width       = $(slider).find('.p_slider_thumb_images_view').width();
+                var thumbs_width    = $(slider).find('.p_slider_thumb_cont').outerWidth() * thumb_num;
+                var marginLeft      = Math.round( (max_width - thumbs_width) / 2) - settings.thumbMargin;
+                $(slider).find('.p_slider_thumb_images').css({
+                    marginLeft: marginLeft
+                })
+            }
+
+            //az elsőre rátesszük az active állapotot
+
+
+        }
+
+        //kívülről triggerelhető fügvény ami leállítja az intervalt, hogy ne fusson tovább
+        $(slider).on('stopInterval', function(){
+            clearInterval(interval);
+        });
+    }
+
+}(jQuery));
